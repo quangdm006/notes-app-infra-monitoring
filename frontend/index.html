@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Notes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>My Notes</h1>
+      <p class="subtitle">Ghi chú cá nhân của tôi</p>
+    </header>
+
+    <form id="note-form">
+      <input type="hidden" id="note-id" />
+      <input type="text" id="note-title" placeholder="Tiêu đề ghi chú" required />
+      <textarea id="note-content" placeholder="Nội dung..." rows="4"></textarea>
+      <div class="form-actions">
+        <button type="submit" id="submit-btn">Thêm ghi chú</button>
+        <button type="button" id="cancel-btn" class="hidden">Hủy</button>
+      </div>
+    </form>
+
+    <div id="notes-list" class="notes-grid"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

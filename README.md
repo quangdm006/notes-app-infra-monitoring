@@ -4,7 +4,7 @@
 
 Dự án được xây dựng nhằm thực hành các kỹ năng cốt lõi của vị trí **System/Cloud Engineer**: Linux, Networking, Docker, Monitoring & Alerting.
 ## Kiến trúc hệ thống
-![Architecture](images/architecture.jpg)
+![Architecture](architecture.jpg)
 
 ## Công nghệ sử dụng
 

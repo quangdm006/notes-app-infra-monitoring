@@ -3,38 +3,8 @@
 Ứng dụng ghi chú 3-tier (single-user CRUD) được containerize hoàn toàn bằng Docker, kèm hệ thống giám sát hạ tầng thời gian thực bằng Prometheus & Grafana, chạy trên VM Ubuntu.
 
 Dự án được xây dựng nhằm thực hành các kỹ năng cốt lõi của vị trí **System/Cloud Engineer**: Linux, Networking, Docker, Monitoring & Alerting.
-
 ## Kiến trúc hệ thống
-
-```
-                        ┌─────────────────────────────────────┐
-                        │         Ubuntu 24.04 LTS VM          │
-                        │         Static IP: 192.168.1.50      │
-                        │      ufw firewall + SSH key auth     │
-                        └─────────────────────────────────────┘
-                                          │
-                    ┌─────────────────────┴─────────────────────┐
-                    │              Docker Network                │
-                    │             (monitoring-net)                │
-                    └─────────────────────┬─────────────────────┘
-                                          │
-        ┌──────────────┬──────────────────┼──────────────────┬──────────────┐
-        │              │                  │                  │              │
-   ┌────▼────┐   ┌─────▼─────┐     ┌──────▼──────┐    ┌──────▼──────┐  ┌────▼────┐
-   │ Frontend │   │  Backend  │     │  Prometheus  │    │   Grafana   │  │   DB    │
-   │  (Nginx) │──▶│ (FastAPI) │────▶│              │───▶│             │  │(Postgres)│
-   │  Port 80 │   │ Port 8000 │     │  Port 9090   │    │  Port 3000  │  │  Port   │
-   └──────────┘   └─────┬─────┘     └──────▲───────┘    └─────────────┘  │  5432   │
-                        │                   │                            └────▲────┘
-                        └───────────────────┼─────────────────────────────────┘
-                                             │
-                                ┌────────────┴────────────┐
-                                │                          │
-                          ┌─────▼──────┐           ┌───────▼──────┐
-                          │Node Exporter│           │   cAdvisor   │
-                          │ (VM metrics)│           │(container metrics)│
-                          └─────────────┘           └──────────────┘
-```
+![Architecture](images/architecture.jpg)
 
 ## Công nghệ sử dụng
 
@@ -53,7 +23,7 @@ Dự án được xây dựng nhằm thực hành các kỹ năng cốt lõi c�
 ## Tính năng
 
 - **CRUD ghi chú đầy đủ**: tạo, xem, sửa, xóa (single-user, không cần đăng nhập)
-- **Kiến trúc 3-tier tách biệt**: Presentation (Nginx) → Application (FastAPI) → Data (PostgreSQL)
+- **Kiến trúc 3-tier **: Presentation (Nginx) → Application (FastAPI) → Data (PostgreSQL)
 - **Container networking**: các service giao tiếp qua tên (service discovery), không dùng IP cứng
 - **Giám sát hạ tầng real-time**: CPU, RAM, Disk của VM và của từng container riêng lẻ
 - **Alert chủ động**: cảnh báo tự động khi RAM available xuống dưới 20%, đã kiểm thử thực tế bằng `stress-ng`
@@ -78,7 +48,7 @@ Truy cập:
 
 ## Dashboard Grafana
 
-Dashboard tự xây dựng gồm 5 panel:
+Dashboard xây dựng gồm 5 panel:
 
 - **RAM Available** — dung lượng RAM còn trống của VM
 - **CPU Usage per Container (%)** — mức sử dụng CPU theo từng container
@@ -94,10 +64,11 @@ Dashboard tự xây dựng gồm 5 panel:
 ```bash
 stress-ng --vm 2 --vm-bytes 3200M --timeout 240s
 ```
-Alert chuyển trạng thái **Normal → Pending → Firing** đúng như thiết kế, tự động trở về Normal khi RAM hồi phục.
+Alert chuyển trạng thái **Normal → Pending → Firing** tự động trở về Normal khi RAM hồi phục.
 
 ## Bảo mật
 
 - SSH key-based authentication, tắt password login
 - ufw firewall chỉ mở đúng port cần thiết (22, 80, 443, 3000, 9090)
 - Node Exporter/cAdvisor không expose port ra ngoài, chỉ Prometheus trong cùng Docker network mới truy cập được
+
